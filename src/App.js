@@ -50,7 +50,7 @@ function App() {
                   Dialogues={Dialogues}
                   time={Time}
                   source={source}
-                  currentTime={currentTime}
+                  initialTime={currentTime || '0:0:0:0'}
                   rythmoPosition={rythmoPosition}
                   dialogueNumber={dialogueNumber}
                 />

@@ -1,16 +1,22 @@
 import "../../../node_modules/video-react/dist/video-react.css";
-import React, { Component, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Button } from "@mui/material";
-import { getSub_Millis, getSub_Seconds } from "../../services/srtreader.js";
+import { getSub_Millis } from "../../services/srtreader.js";
 
 import { TextField } from "@mui/material";
 import { NewSRTDownload } from "../../services/srtHandler.js";
-import { useRaf } from "react-use";
+
+import styles from './rythmoband.module.css'
+import FloatingWords from "./FloatingWords/FloatingWords";
+
+
+import { convertToSecInt } from "../../services/timeFunctions";
 
 export default function Rythmoband(props) {
-  const [Timer, setTimer] = useState(0);
-  const elapsed = useRaf(props.timer, 0);
+
+  const [dialogue, setDialogue] = useState(props.dialogue)
+
   const initialPosition = useRef(
     props.rythmoPosition === undefined ? "90%" : props.rythmoPosition
   );
@@ -18,9 +24,7 @@ export default function Rythmoband(props) {
   const [number, setnumber] = useState(
     props.dialogueNumber === undefined ? 0 : props.dialogueNumber
   );
-  const [timerCheck, setTimerCheck] = useState(true);
   const [moverNumber, setMoverNumber] = useState(40);
-  const [currentTime, setCurrentTime] = useState(0);
 
   const textMover = () => {
     let x = parseFloat(initialPosition.current);
@@ -29,11 +33,6 @@ export default function Rythmoband(props) {
 
     let timeToMove = start - end;
     setMoverNumber((timeToMove / 5000) * props.player.playbackRate);
-
-    setCurrentTime(props.time.currentTime);
-    x = x + moverNumber;
-    let y = `${x}%`;
-    initialPosition.current = y;
   };
   requestAnimationFrame(() => {
     textMover();
@@ -62,6 +61,16 @@ export default function Rythmoband(props) {
     }
   };
 
+  const [timeInSeconds, setTimeInSeconds] = useState()
+
+  useEffect(() => {
+    const timeInSecondsVar = []
+    for (let i = 0; i < props.time.length; i++) {
+      timeInSecondsVar[i] = [convertToSecInt(props.time[i][0]), convertToSecInt(props.time[i][1])]
+    }
+    setTimeInSeconds(timeInSecondsVar)
+  }, [])
+
   return (
     <>
       <div style={{ display: "flex", flexDirection: "row" }}>
@@ -71,14 +80,14 @@ export default function Rythmoband(props) {
           id="outlined-start-adornment"
           defaultValue="edit your values here"
           onChange={(e) => {
-            props.dialogue[number] = e.target.value;
-            console.log(e.target.value);
+            let dialogueClone = [...dialogue];
+            dialogueClone[number] = e.target.value;
+            setDialogue(dialogueClone)
           }}
         />
         <Button
           onClick={() => {
-            console.log(props.time[0]);
-            NewSRTDownload(props.dialogue, props.time);
+            NewSRTDownload(dialogue, props.time);
           }}
           variant="contained"
           component="label"
@@ -88,41 +97,11 @@ export default function Rythmoband(props) {
           save SRT
         </Button>
       </div>
-      <div
-        style={{
-          width: window.innerWidth,
-          background: "#FF8232",
-          marginTop: "20px",
-          height: "75px",
-          position: "relative",
-          border: "5px solid black",
-        }}
-      >
-        <div
-          style={{
-            width: "5px",
-            background: "red",
-            marginTop: "20px",
-            height: "75px",
-            position: "absolute",
-            top: "-25%",
-            left: "25%",
-          }}
-        ></div>
+      <div className={styles.mainContainer}>
+        <div className={styles.redLine}/>
 
-        <strong
-          style={{
-            position: "absolute",
-            left: initialPosition.current,
-            top: "25%",
-            fontSize: "2rem",
-            "white-space": "nowrap",
-            overflow: "hidden",
-            "text-overflow": "ellipsis",
-          }}
-        >
-          {props.dialogue[number]}
-        </strong>
+        {timeInSeconds &&
+        <FloatingWords dialogue={dialogue} player={props.player} time={timeInSeconds}/>}
       </div>
       <pre id="output"></pre>
       <div id="container1"></div>

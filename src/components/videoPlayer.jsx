@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 
 import Rythmoband from "./rythmoband/rythmoband";
 import { getSub_Seconds, MakeJson, ToSrtTime } from "../services/srtreader";
+import { convertToSecInt } from "../services/timeFunctions";
 
 const sources = {
   sintelTrailer: "http://media.w3.org/2010/05/sintel/trailer.mp4",
@@ -62,9 +63,9 @@ export default class PlayerControlExample extends Component {
     if (this.state.initialPlay) {
       this.setState({ initialPlay: false });
       this.player.seek(
-        this.props.currentTime === undefined
+        this.props.initialTime === undefined
           ? 0
-          : getSub_Seconds(this.props.currentTime)
+          : getSub_Seconds(this.props.initialTime)
       );
     }
   }
@@ -93,13 +94,11 @@ export default class PlayerControlExample extends Component {
     return () => {
       const { player } = this.player.getState();
       this.player.seek(player.currentTime + seconds);
-      console.log(player.currentTime);
     };
   }
   getCurrentTime() {
     return () => {
       const { player } = this.player.getState();
-      console.log(player.currentTime);
     };
   }
 
@@ -154,6 +153,7 @@ export default class PlayerControlExample extends Component {
             fluid={false}
             width={"65%"}
             height={490}
+            startTime={convertToSecInt(this.props.initialTime)}
             ref={(player) => {
               this.player = player;
             }}
