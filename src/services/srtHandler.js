@@ -23,7 +23,6 @@ const NewSRTDownload = (dialogues, sub_time) => {
     srt = srt + cluster;
   }
 
-  console.log(srt);
   var data = "text;charset=utf-8,";
   var a = document.createElement("a");
   a.href = "data:text/plain," + encodeURI(srt);

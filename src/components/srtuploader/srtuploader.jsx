@@ -112,7 +112,6 @@ export default function SrtUploader() {
     let { currentTime, dial_number, rythmo_position } = await loadJson(
       event.target.files[0]
     );
-    console.log({ currentTime, dial_number, rythmo_position });
 
     setCurrentTime(currentTime);
     setDialogueNumber(dial_number);

@@ -45,7 +45,6 @@ export const makeSubs = () => {
   for (var i = 0; i < time.length; i++) {
     document.getElementById("output").innerHTML +=
       time[i] + "\n" + dialogue[i] + "\n";
-    console.log(time[i] + "\n" + dialogue[i] + "\n");
   }
 };
 export const getSub_Seconds = (param) => {
@@ -138,11 +137,6 @@ export const ToSrtTime = (value) => {
   } else {
     mills = dec;
   }
-  console.log(hours);
-  console.log(mins);
-  console.log(secs);
-  console.log(mills);
-
   return `${hours}:${mins}:${secs}:${mills}`;
 };
 export const getlength = (number) => {
